@@ -10,8 +10,8 @@ services:
     volumes:
       - ./backend:/app 
     environment:
-      - OLLAMA_URL: ${OLLAMA_URL}
-      - DB_URL: ${DB_URL}
+      OLLAMA_URL: ${OLLAMA_URL}
+      DB_URL: ${DB_URL}
     networks:
       - ollama-docker
   ollama:
@@ -19,23 +19,23 @@ services:
     ports: 
       - 7869:11434  
     volumes:
-      - ./:/code
+      - .:/code
       - ./ollama/ollama:./root/ollama
     container_name: ollama
     pull_policy: always
     tty: true
     restart: always
     environment:
-      - OLLAMA_KEEP_ALIVE: 24h
-      - OLLAMA_HOST: 0.0.0.0
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0
     networks:
       - ollama-docker  
   db:
-    image: pgvector/pgvector:16
+    image: pgvector/pgvector:pg16
     ports:
       - 5432:5432
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     env_file:
       - .env 
     environment:
@@ -46,11 +46,8 @@ services:
     networks:
       - ollama-docker
 
-  networks:
-    ollama-docker:
-      external: false
-
-  volumes:
-    backend:
-    ollama/ollama:
-    db:       
+networks:
+  ollama-docker:
+    external: false
+volumes:
+  db:       
